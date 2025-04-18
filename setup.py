@@ -7,7 +7,7 @@ setup(name='lavian_et_al_2025',
       url='http://github.com/portugueslab/lavian_et_al_2025',
       author="Hagar Lavian, Ot Prat",
       author_email='hagar.lavian@gmail.com',
-      python_requires="=3.7.12",
+      python_requires=">=3.7",
       license="GNU General Public License v3",
       packages=['lavian_et_al_2025'],
       zip_safe=False)
