@@ -2,6 +2,26 @@ import numpy as np
 
 
 def exp_decay_kernel(tau, dt, len_rec):
+    """
+    Creates an exponential decay kernel for temporal filtering of stimulus data.
+
+    This function generates a normalized exponential decay function that can be
+    used to convolve with stimulus data to generate regressors.
+
+    Parameters
+    ----------
+    tau : float
+        Time constant of exponential decay in same units as dt
+    dt : float
+        Time step of the recording in seconds
+    len_rec : int
+        Length of the resulting kernel in number of time steps
+
+    Returns
+    -------
+    decay : ndarray
+        Normalized exponential decay kernel
+    """
     upsample = 10
     t = np.arange(len_rec * upsample) * dt / upsample
 
@@ -11,7 +31,24 @@ def exp_decay_kernel(tau, dt, len_rec):
 
 
 def corr2_coeff(A, B):
-    # Row-wise mean of input arrays & subtract from input arrays
+    """
+    Computes the Pearson correlation coefficient between each row of matrix A
+    and each row of matrix B, returning a correlation matrix.
+
+    Parameters
+    ----------
+    A : ndarray
+        First input matrix of shape (n_rows_A, n_columns)
+    B : ndarray
+        Second input matrix of shape (n_rows_B, n_columns)
+
+    Returns
+    -------
+    corr : ndarray
+        Correlation matrix of shape (n_rows_A, n_rows_B) where each element [i,j]
+        is the correlation coefficient between row i of A and row j of B
+
+    """
     A_mA = A - A.mean(1)[:, None]
     B_mB = B - B.mean(1)[:, None]
 
@@ -24,7 +61,19 @@ def corr2_coeff(A, B):
 
 
 def normalize_traces(traces):
+    """
+    Z-scoring neural activity traces (fast implementation).
 
+    Parameters
+    ----------
+    traces : ndarray
+        Neural activity traces with shape (time, ROIs)
+
+    Returns
+    -------
+    norm_traces : ndarray
+        Z-scored traces with same shape as input, normalized to mean=0, std=1
+    """
     norm_traces = np.copy(traces)
     norm_traces = norm_traces.T
     sd = np.nanstd(norm_traces)
