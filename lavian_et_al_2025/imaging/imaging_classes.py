@@ -60,17 +60,13 @@ class ImagingExperiment:
         pass
 
     @property
-    def tau_off(self):
-        return sensor_taus[self.indicator]
-
-    @property
     def fs_imaging(self):
         return 1 / self.dt_imaging
 
 
 class TwoPExperiment(ImagingExperiment, MultiSessionExperiment):
     """
-    Class for handling two-photon imaging experiment data collected using the brunoise software.
+    Class for handling two-photon imaging experiment data collected using Brunoise (software).
 
     Extends ImagingExperiment with specific functionality for two-photon microscopy,
     including metadata parsing for resolution calculation and frame timing.
@@ -96,9 +92,9 @@ class TwoPExperiment(ImagingExperiment, MultiSessionExperiment):
     @property
     def dt_imaging(self):
         if self._dt_imaging is None:
-            try:
+            try: # for data acquired with old LabView software
                 self._dt_imaging = self.scope_config["frame_time"] / 1000
-            except KeyError:  # for data acquired with the python 2P program
+            except KeyError:  # for data acquired with Brunoise
                 self._dt_imaging = 1 / self.scope_config["scanning"]["framerate"]
 
         return self._dt_imaging
@@ -117,16 +113,16 @@ class TwoPExperiment(ImagingExperiment, MultiSessionExperiment):
                     n_px_x, n_px_y = stack_param["shape_full"][2:4]
             else:
                 _, n_px_x, n_px_y = self.stack_shape
-            try:  # new python software data
-                z_res = self.scope_config["recording"]["dz"]
-                aspect_ratio = self.scope_config["scanning"]["aspect_ratio"]
-                voltage_max = self.scope_config["scanning"]["voltage"]
-                if aspect_ratio >= 1:
-                    voltage_x = voltage_max
-                    voltage_y = voltage_x / aspect_ratio
-                else:
-                    voltage_x = voltage_max * aspect_ratio
-                    voltage_y = voltage_max
+
+            z_res = self.scope_config["recording"]["dz"]
+            aspect_ratio = self.scope_config["scanning"]["aspect_ratio"]
+            voltage_max = self.scope_config["scanning"]["voltage"]
+            if aspect_ratio >= 1:
+                voltage_x = voltage_max
+                voltage_y = voltage_x / aspect_ratio
+            else:
+                voltage_x = voltage_max * aspect_ratio
+                voltage_y = voltage_max
 
             x_res = compute_resolution(voltage_x, n_px_x)
             y_res = compute_resolution(voltage_y, n_px_y)
@@ -137,7 +133,7 @@ class TwoPExperiment(ImagingExperiment, MultiSessionExperiment):
 
 class LightsheetExperiment(ImagingExperiment, EmbeddedExperiment):
     """
-    Class for handling light-sheet imaging experiment data collected using sashimi software.
+    Class for handling light-sheet imaging experiment data collected using Sashimi (software).
 
     Extends ImagingExperiment with specific functionality for light-sheet microscopy,
     including metadata parsing for z-scanning frequency and resolution calculation.
@@ -170,7 +166,6 @@ class LightsheetExperiment(ImagingExperiment, EmbeddedExperiment):
             raise ValueError("No entries for frequency have been found in metadata!")
 
         return self._fn
-
 
     @property
     def dt_imaging(self):
