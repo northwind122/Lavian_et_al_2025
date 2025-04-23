@@ -26,6 +26,8 @@ This repository contains Jupyter notebooks organized into the following categori
 - `landmarks/`: Analysis of the representation of landmark information in the abenula and IPN
 - `heading_direction/`: Analysis of representation of visual motion in HD neurons
 - `ablations/`: Analysis of the effects of targeted habenuka ablations on the head direction system and representation of visual information
+- `anatomy/`: A notebook for generation of anatomy plots
+- `morphing/`: notebooks for registration of different datasets to a reference brain. 
 
 ## Usage
 
@@ -35,17 +37,10 @@ The analysis is organized into Jupyter notebooks. To run the notebooks:
 conda activate vis_nav
 
 2. Launch Jupyter:
-jupyter notebook
+jupyter lab
 
 
-3. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig1_anatomy_panels".
-
-## Example Data
-
-Example calcium imaging datasets are provided in the `example_data/` directory to demonstrate the expected input format and to verify the analysis pipeline.
-
-
-## License
+3. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig 1c_d_e tuning to visual motion.ipynb".
 
 
 ## Citation

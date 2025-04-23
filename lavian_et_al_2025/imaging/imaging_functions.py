@@ -32,5 +32,5 @@ def normalize_traces(traces):
     norm_traces = norm_traces-mean
     norm_traces = norm_traces/sd
     norm_traces = norm_traces.T
-    
+
     return norm_traces
