@@ -3,7 +3,7 @@ import pandas as pd
 from bouter.utilities import calc_vel
 from scipy.interpolate import interp1d
 from scipy.signal import convolve2d, medfilt
-import colorspacious
+from lavian_et_al_2025.visual_motion.colors import JCh_to_RGB255
 
 
 N_DIRS = 8
@@ -85,47 +85,7 @@ def quantize_directions(angles, n_dirs=8):
     return bin_centers[:n_dirs],  (np.digitize(np.mod(angles, np.pi*2), bins) - 1) % n_dirs
 
 
-def get_paint_function(stimulus_log, protocol_name):
-    '''
-    :param stimulus_log: the stimulus log saved by stytra
-    :param protocol_name: the name of the protocol taken from the stytra metadata file
-    :return:
-    s = 3 x n matrix of RGB values representing the values of the stimulus
-    t = n x 2 matrix of time points for stimulus start (1st column) and end (2nd column)
-    '''
-    print(stimulus_log.columns)
-    paint_function = stimulus_coloring_mapping.get(protocol_name)
-    s, t = paint_function(stimulus_log)
-    return s, t
-
-
-def stimulus_plot_e0040(stimulus_log):
-    t_change, t_change_ind = get_timing_from_current_phase(stimulus_log)[0:2]
-
-    sx = np.diff(np.asarray(stimulus_log.bg_x))[t_change_ind[:, 0]]
-    sy = np.diff(np.asarray(stimulus_log.bg_y))[t_change_ind[:, 0]]
-    ind0 = np.where((sx == 0) & (sy == 0))[0]
-
-    angles = np.arctan2(sy, sx)
-    angles = np.stack(
-        [
-            np.full(len(sx), 60),
-            np.full(len(sx), 60),
-            (-angles + 2.5) * 180 / np.pi,
-        ],
-        1)
-    s = JCh_to_RGB255(angles)
-    s[ind0, :] = 0
-
-    return s, t_change
-
-
-def JCh_to_RGB255(x):
-    output = np.clip(colorspacious.cspace_convert(x, "JCh", "sRGB1"), 0, 1)
-    return (output * 255).astype(np.uint8)
-
-
-def get_tuning_map(traces, sens_regs, n_dirs=8):
+def get_tuning_map_rois(traces, sens_regs, n_dirs=8):
     # calculate directional tuning from zscored traces for each roi
     n_t = sens_regs.shape[0]
     reg = sens_regs.values.T @ traces[:n_t, :]
@@ -139,4 +99,48 @@ def get_tuning_map(traces, sens_regs, n_dirs=8):
     amp = np.sqrt(np.sum(reg_vectors ** 2, 0))
 
     return amp, angle
+
+
+def get_tuning_map_pixels(img, sens_regs, n_dirs=8):
+    # calculate directional tuning from dF/F traces, px-wise
+    traces = img.reshape(img.shape[0], -1)
+
+    n_t = sens_regs.shape[0]
+    reg = sens_regs.values.T @ traces[:n_t, :]
+    reg = reg.reshape(reg.shape[0], img.shape[-2], img.shape[-1])
+
+    # tuning vector
+    bin_centers, bins = quantize_directions([0], n_dirs)
+    vectors = np.stack([np.cos(bin_centers), np.sin(bin_centers)], 0)
+    reg_vectors = np.reshape(
+        vectors @ np.reshape(reg[:, :, :], (n_dirs, -1)),
+        (2,) + reg.shape[1:],
+    )
+
+    angle = np.arctan2(reg_vectors[1], reg_vectors[0])
+    amp = np.sqrt(np.sum(reg_vectors ** 2, 0))
+
+    return amp, angle
+
+
+def color_stack_3d(
+        amp,
+        angle,
+        hueshift=2.5,
+        amp_percentile=80,
+        maxsat=50,
+        lightness_min=100,
+        lightness_delta=-40,
+    ):
+    output_lch = np.empty(amp.shape + (3,))
+    maxamp = np.percentile(amp, amp_percentile)
+
+    output_lch[:, :, 0] = (
+            lightness_min + (np.clip(amp / maxamp, 0, 1)) * lightness_delta
+    )
+    output_lch[:, :, 1] = (np.clip(amp / maxamp, 0, 1)) * maxsat
+    output_lch[:, :, 2] = (-angle + hueshift) * 180 / np.pi
+
+    return JCh_to_RGB255(output_lch)
+
 
