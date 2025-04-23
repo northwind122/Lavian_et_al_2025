@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
-from numba import jit
 from bouter.utilities import calc_vel
-from scipy.signal import medfilt
+from scipy.interpolate import interp1d
+from scipy.signal import convolve2d, medfilt
 import colorspacious
 
 
 N_DIRS = 8
 HUESHIFT = 2.5
 
+
 def make_sensory_regressors(exp, n_dirs=8, upsampling=5, sampling= 1/3):
-    # make sensory regressors. requires old bouter stimulus_param_log.
+
     stim = stim_vel_dir_dataframe(exp)
     bin_centres, dir_bins = quantize_directions(stim.theta)
     ind_regs = np.zeros((n_dirs, len(stim)))
@@ -119,7 +120,23 @@ def stimulus_plot_e0040(stimulus_log):
     return s, t_change
 
 
-
 def JCh_to_RGB255(x):
     output = np.clip(colorspacious.cspace_convert(x, "JCh", "sRGB1"), 0, 1)
     return (output * 255).astype(np.uint8)
+
+
+def get_tuning_map(traces, sens_regs, n_dirs=8):
+    # calculate directional tuning from zscored traces for each roi
+    n_t = sens_regs.shape[0]
+    reg = sens_regs.values.T @ traces[:n_t, :]
+
+    # tuning vector
+    bin_centers, bins = quantize_directions([0], n_dirs)
+    vectors = np.stack([np.cos(bin_centers), np.sin(bin_centers)], 0)
+    reg_vectors = vectors @ reg
+
+    angle = np.arctan2(reg_vectors[1], reg_vectors[0])
+    amp = np.sqrt(np.sum(reg_vectors ** 2, 0))
+
+    return amp, angle
+
