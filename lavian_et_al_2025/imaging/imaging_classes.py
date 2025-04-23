@@ -226,7 +226,7 @@ def compute_resolution(zoom, size_px):
     float
         Pixel size in microns
 
-    Note: 
+    Note:
     The calculation uses a calibration based on known distances measured
     at different zoom levels, scaling proportionally to the current zoom
     and image size.

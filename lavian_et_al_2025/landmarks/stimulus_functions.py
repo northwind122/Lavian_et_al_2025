@@ -9,7 +9,31 @@ HUESHIFT = 2.5
 
 
 def get_tuning_map_rois(traces, sens_regs, n_dirs=8):
-    # calculate positional tuning for extracted traces
+    """
+    Calculates positional tuning properties for traces extracted from ROIs.
+
+    For each ROI, computes the preferred landmark position and tuning amplitude
+    by projecting neural activity onto positional regressors.
+
+    Parameters
+    ----------
+    traces : ndarray
+        Neural activity traces with shape (time, ROIs)
+    sens_regs : ndarray or DataFrame
+        Sensory regressor matrix containing landmark position information
+        with shape (time, n_positions)
+    n_dirs : int, default=8
+        Number of position bins (evenly spaced around the arena)
+
+    Returns
+    -------
+    amp : ndarray
+        Tuning strength for each ROI - indicates how strongly the neuron
+        responds to landmark position
+    angle : ndarray
+        Preferred landmark position (in radians) for each ROI
+    """
+
     n_t = sens_regs.shape[0]
     reg = sens_regs.T @ traces[:n_t, :]
 
@@ -18,6 +42,7 @@ def get_tuning_map_rois(traces, sens_regs, n_dirs=8):
     vectors = np.stack([np.cos(bin_centers), np.sin(bin_centers)], 0)
     reg_vectors = vectors @ reg
 
+    # Extract angle (preferred position) and amplitude (tuning strength)
     angle = np.arctan2(reg_vectors[1], reg_vectors[0])
     amp = np.sqrt(np.sum(reg_vectors ** 2, 0))
 
@@ -25,7 +50,28 @@ def get_tuning_map_rois(traces, sens_regs, n_dirs=8):
 
 
 def get_tuning_map_pixels(img, sens_regs, n_dirs=8):
-    # calculate directional tuning from dF/F traces, px-wise
+    """
+    Calculates positional tuning properties for each pixel in an imaging dataset.
+
+    This function creates a spatial map by computing the preferred landmark position and tuning amplitude for each pixel
+    in an imaging stack by projecting pixel activity onto positional regressors.
+
+    Parameters
+    ----------
+    img : ndarray
+        Imaging data with shape (time, x, y) representing activity over time for each pixel
+    sens_regs : ndarray or DataFrame
+        Sensory regressor matrix containing landmark position information with shape (time, n_positions)
+    n_dirs : int, default=8
+        Number of position bins (evenly spaced around the arena)
+
+    Returns
+    -------
+    amp : ndarray
+        array of tuning amplitude for each pixel
+    angle : ndarray
+        array of preferred landmark position (in radians) for each pixel
+    """
     traces = img.reshape(img.shape[0], -1)
 
     n_t = sens_regs.shape[0]
@@ -40,6 +86,7 @@ def get_tuning_map_pixels(img, sens_regs, n_dirs=8):
         (2,) + reg.shape[1:],
     )
 
+    # Extract angle (preferred position) and amplitude (tuning strength)
     angle = np.arctan2(reg_vectors[1], reg_vectors[0])
     amp = np.sqrt(np.sum(reg_vectors ** 2, 0))
 
@@ -47,6 +94,30 @@ def get_tuning_map_pixels(img, sens_regs, n_dirs=8):
 
 
 def make_sensory_regressors(exp, n_dirs=8, upsampling=5, sampling=1 / 3):
+    """
+    Creates landmark position regressors from experiment data.
+
+    This function creates indicator variables for each position, upsamples them, applies an exponential decay kernel,
+    and then downsamples back to the original rate. The resulting regressors model the expected neural response to
+    landmarks at different positions.
+
+    Parameters
+    ----------
+    exp : object
+        Experiment object containing data with landmark positions
+    n_dirs : int, default=8
+        Number of position bins to use (evenly spaced around 360 degrees). Never actually used, stimulus was always
+        split into 8 positions.
+    upsampling : int, default=5
+        Factor by which to upsample the data for smoother convolution
+    sampling : float, default=1/3
+        Imaging sampling rate in Hz
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame with columns for each position regressor
+    """
     stim = stim_vel_dir_dataframe(exp)
     bin_centres, dir_bins = quantize_directions(stim.theta)
     ind_regs = np.zeros((n_dirs, len(stim)))
