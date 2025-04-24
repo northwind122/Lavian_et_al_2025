@@ -43,6 +43,10 @@ jupyter lab
 3. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig 1c_d_e tuning to visual motion.ipynb".
 
 
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+
 ## Citation
 
 If you use this code in your research, please cite:

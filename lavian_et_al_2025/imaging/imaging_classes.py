@@ -92,7 +92,7 @@ class TwoPExperiment(ImagingExperiment, MultiSessionExperiment):
     @property
     def dt_imaging(self):
         if self._dt_imaging is None:
-            try: # for data acquired with old LabView software
+            try: # for data acquired with older version of the software
                 self._dt_imaging = self.scope_config["frame_time"] / 1000
             except KeyError:  # for data acquired with Brunoise
                 self._dt_imaging = 1 / self.scope_config["scanning"]["framerate"]
