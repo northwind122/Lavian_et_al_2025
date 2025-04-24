@@ -57,7 +57,7 @@ def corr2_coeff(A, B):
     ssB = (B_mB**2).sum(1)
 
     # Get corr coeff
-    return np.dot(A_mA, B_mB.T) / np.sqrt(np.dot(ssA[:, None],ssB[None]))
+    return np.dot(A_mA, B_mB.T) / np.sqrt(np.dot(ssA[:, None], ssB[None]))
 
 
 def normalize_traces(traces):

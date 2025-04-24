@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 from scipy.signal import convolve2d
+from lavian_et_al_2025.visual_motion.colors import JCh_to_RGB255
 from lavian_et_al_2025.visual_motion.stimulus_functions import stim_vel_dir_dataframe, quantize_directions
 
 
@@ -140,3 +141,26 @@ def make_sensory_regressors(exp, n_dirs=8, upsampling=5, sampling=1 / 3):
     reg_sensory = convolved[:, ::upsampling]
 
     return pd.DataFrame(reg_sensory.T, columns=[f"motion_{i}" for i in range(n_dirs)])
+
+
+def color_stack(
+        amp,
+        angle,
+        hueshift=2.5,
+        amp_percentile=80,
+        maxsat=50,
+        lightness_min=100,
+        lightness_delta=-40,
+    ):
+    output_lch = np.zeros((amp.shape[0], 3))
+    output_lch[:,0]
+    maxamp = np.percentile(amp, amp_percentile)
+
+    output_lch[:, 0] = (
+            lightness_min + (np.clip(amp / maxamp, 0, 1)) * lightness_delta
+    )
+    output_lch[:, 1] = (np.clip(amp / maxamp, 0, 1)) * maxsat
+    output_lch[:, 2] = (angle + hueshift) * 180 / np.pi
+
+    return JCh_to_RGB255(output_lch)
+
