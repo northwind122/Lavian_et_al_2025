@@ -18,21 +18,18 @@ class ImagingExperiment:
         Time step between frames in seconds
     resolution : tuple, optional
         Spatial resolution (z, x, y) in microns per pixel
-    indicator : str, optional
-        Calcium indicator type (e.g., 'GCaMP6f', 'GCaMP6s')
     n_planes : int, optional
         Number of imaging planes
     *args, **kwargs :
         Additional arguments passed to parent class
     """
     def __init__(self, *args, dt_imaging=None, resolution=None,
-                 indicator=None, n_planes=None, **kwargs):
+                 n_planes=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.scope_config = self["imaging"]["microscope_config"]
 
         self._dt_imaging = dt_imaging
         self._resolution = resolution
-        self._indicator = indicator
         self._n_planes = n_planes
         self._data_shape = None
         self._fn = None
