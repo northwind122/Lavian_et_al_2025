@@ -152,8 +152,39 @@ def color_stack(
         lightness_min=100,
         lightness_delta=-40,
     ):
+    """
+    This function converts amplitude and angle data to RGB color values. This function takes
+    amplitude and angle arrays and maps them to colors where:
+    - Amplitude controls brightness and saturation
+    - Angle controls the hue (color)
+
+    Parameters
+    ----------
+    amp : numpy.ndarray
+        Array of amplitude values. Higher values will appear more saturated and
+        typically darker (depending on lightness_delta).
+    angle : numpy.ndarray
+        Array of angular values in radians. These determine the hue of the output colors.
+    hueshift : float, optional
+        Constant offset added to angles before converting to hue (in radians).
+    amp_percentile : float, optional
+        Percentile of amplitude values to use for normalization (0-100).
+    maxsat : float, optional
+        Maximum saturation value in LCh color space.
+    lightness_min : float, optional
+        Base lightness value in LCh color space.
+    lightness_delta : float, optional
+        Change in lightness as amplitude increases from 0 to maximum.
+        Negative values make higher amplitudes darker. Default is -40.
+
+    Returns
+    -------
+    numpy.ndarray
+        Array of RGB values with shape (n, 3) where n is the length of the input arrays.
+        Values are scaled to 0-255 range (8-bit RGB).
+    """
+
     output_lch = np.zeros((amp.shape[0], 3))
-    output_lch[:,0]
     maxamp = np.percentile(amp, amp_percentile)
 
     output_lch[:, 0] = (
