@@ -5,6 +5,23 @@ import flammkuchen as fl
 
 
 def to_sep_string(nums, separator="x"):
+    
+    """
+    This function converts a sequence of numbers to a string with specified separator.
+    
+    Parameters
+    ----------
+    nums : sequence
+        Sequence of values to be converted to string.
+    separator : str, optional
+        String used to join the values. Default is "x".
+        
+    Returns
+    -------
+    str
+        String representation of numbers joined by the separator.
+        If nums contains only one element, returns that element as a string.
+    """
     if len(nums) == 1:
         return nums[0]
     return separator.join(map(str, nums))
@@ -99,13 +116,35 @@ def registration_arguments(ref_ptr, mov_ptr, wfo, wmo, path_output,
 
 def register(ref, mov, path_initial, path_output,
              **registration_kwargs):
-    """ Prepares registration inputs and runs the registration
+    """
+    This function performs image registration using ANTs.
+    
+    This function prepares input images, runs the registration process, and returns 
+    the warped images along with the registration result.
+    
+    Parameters
+    ----------
+    ref : ndarray
+        Reference image as a numpy array (uint8).
+    mov : ndarray
+        Moving image as a numpy array (uint8).
+    path_initial : str or Path
+        Path to the initial transformation matrix (in ANTs format).
+    path_output : str or Path
+        Directory where transformation files will be saved.
+    **registration_kwargs : dict
+        Additional arguments to pass to registration_arguments function, including:
+        - registration_steps: List of TransformStep objects defining the registration process
+        - interpolation: Method for interpolation during warping
+        
+    Returns
+    -------
+    tuple
+        (warpedfixout, warpedmovout, res)
+        - warpedfixout: ANTs image - fixed image warped to moving space
+        - warpedmovout: ANTs image - moving image warped to fixed space
+        - res: Result from antsRegistration function
 
-    :param ref: (uint8)
-    :param mov: (uint8)
-    :param path_initial: path of the initial transformation matrix (in ANTs format)
-    :param path_output:
-    :return:
     """
     ants_function = ants.utils.get_lib_fn("antsRegistration")
 
@@ -126,17 +165,34 @@ def register(ref, mov, path_initial, path_output,
 
 
 def transform_to_ref(mov, refs, transform_folders, interpolation="Linear", to_ref=True):
-    """ Transforms a moving image (functional) to a reference
-    or over bridge stacks to a final reference
-
-    :param mov:
-    :param refs:
-    :param transform_folders: folders containing transforms_1Warp and
-        transforms_0GenericAffine for each ref in the refs
-    :param interpolation: Linear, NearestNeighbor Gaussian BSpline[order=3],
-        CosineWindowedSinc WelchWindowedSinc HammingWindowedSinc LanczosWindowedSinc
-    :return: transformed stack
     """
+    Transform an image to a reference. This function applies a sequence of transformations to a moving image,
+    directly or through bridge stacks to a final reference.
+    
+    Parameters
+    ----------
+    mov : ndarray
+        Moving image as a numpy array (typically a functional image).
+    refs : list of ndarray
+        List of reference images as numpy arrays.
+    transform_folders : list of str or Path
+        List of folders containing transformation files for each reference.
+        Each folder should contain transforms_1Warp.nii.gz and 
+        transforms_0GenericAffine.mat files.
+    interpolation : str, optional
+        Interpolation method for warping. Options include "Linear", "NearestNeighbor",
+        "Gaussian", "BSpline", "CosineWindowedSinc", "WelchWindowedSinc", etc.
+        Default is "Linear".
+    to_ref : bool, optional
+        Direction of transformation. If True, transforms from moving to reference space.
+        If False, transforms from reference to moving space. Default is True.
+        
+    Returns
+    -------
+    ANTsImage
+        Transformed image as an ANTs image object.
+    """
+
     transform_fn = ants.utils.get_lib_fn("antsApplyTransforms")
     img_mov = ants.from_numpy(mov).clone("float")
     for ref, folder in zip(refs, transform_folders):
@@ -177,12 +233,27 @@ def transform_to_ref(mov, refs, transform_folders, interpolation="Linear", to_re
 
 def transform_points(points, transform_folders, to_ref=False):
     """
-
-    :param points: numpy array of points, n_points x 3
-    :param transform_folders:
-    :param to_ref: direction of the transformation from less-reference 
-        to the most reference (from source to refererence True, otherwise false)
-    :return:
+    This function transforms a set of points through a series of transformations.
+    
+    This function applies ANTs transformations to a set of 3D points,
+    allowing for warping points between spaces.
+    
+    Parameters
+    ----------
+    points : ndarray
+        Numpy array of points with shape (n_points, 3).
+    transform_folders : list of str or Path
+        List of folders containing transformation files.
+        Each folder should contain transforms_1Warp.nii.gz, transforms_1InverseWarp.nii.gz, 
+        and transforms_0GenericAffine.mat files.
+    to_ref : bool, optional
+        Direction of transformation. If True, transforms from reference to source space.
+        If False, transforms from source to reference space. 
+        
+    Returns
+    -------
+    ndarray
+        Transformed points as a numpy array with the same shape as input.
     """
     libfn = ants.utils.get_lib_fn('antsApplyTransformsToPoints')
 
@@ -219,11 +290,27 @@ def transform_points(points, transform_folders, to_ref=False):
 
 
 def convert_initial_transform(transform_folder):
-    """ Converts an affine transform matrix from HDF5 to ANTS format
-
-    :param transform_folder: the folder containing initial_transform.h5
-    :return: path to the transform
     """
+    Convert an affine transform matrix from HDF5 to ANTs format.
+    
+    This function loads a transformation matrix stored in HDF5 format
+    and converts it to the ANTs transformation format.
+    
+    Parameters
+    ----------
+    transform_folder : str or Path
+        Directory containing the initial_transform.h5 file.
+        
+    Returns
+    -------
+    str
+        Path to the created ANTs format transformation file.
+        
+    Note: this function expects the HDF5 file to contain a 4×3 affine transformation matrix
+    where the first 3 columns represent the linear component and the 4th column
+    represents the offset (translation).
+    """
+
     transform_mat = fl.load(transform_folder / "initial_transform.h5")
     path_initial = str(transform_folder / "initial_transform.mat")
     at = ants.create_ants_transform(transform_type='AffineTransform', precision='float', dimension=3,
