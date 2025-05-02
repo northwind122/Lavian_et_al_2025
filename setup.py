@@ -8,7 +8,7 @@ setup(name='lavian_et_al_2025',
       author="Hagar Lavian, Ot Prat, Luigi Petrucco, Vilim Štih, Ruben Portugues",
       author_email='hagar.lavian@gmail.com',
       python_requires=">=3.7",
-      license="GNU General Public License v3",
+      license="MIT",
       packages=['lavian_et_al_2025'],
       zip_safe=False)
 
