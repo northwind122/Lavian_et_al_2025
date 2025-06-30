@@ -17,6 +17,14 @@ conda env create -f environment.yml
 3. Activate the environment:
 conda activate vis_nav
 
+The code provided in this package was tested on Windows 10 operating system. 
+
+All software dependencies (including version numbers) can be found in the environment.yml file in this repository. The suite2p_env.yml file can be used to generate the environment used for suite2p pre-processing of the data. 
+
+Typical install time on a normal desktop computer: less than 1 hour, depending on the number of packages already installed.
+
+Expected run time on a normal desktop coputer: varies heavily between analysis types. Some notebooks will provide output in several minutes while other will provide output in several hours, depending on data type (e.g., whole brain datasets Vs single region datasets) or analysis type (e.g., pixel-wise analysis Vs ROI-wise analysis). 
+
 ## Repository Structure
 
 This repository contains Jupyter notebooks organized into the following categories:
