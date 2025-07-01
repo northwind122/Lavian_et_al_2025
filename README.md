@@ -41,14 +41,15 @@ This repository contains Jupyter notebooks organized into the following categori
 
 The analysis is organized into Jupyter notebooks. To run the notebooks:
 
-1. Ensure you have activated the conda environment:
+1. Download the paper data and enter data location in the lavian_et_al_2025/data_location.py script. The variable "master_all" should be the path to the all datasets. The rest should not be edited. 
+
+2. Ensure you have activated the conda environment:
 conda activate vis_nav
 
-2. Launch Jupyter:
+3. Launch Jupyter:
 jupyter lab
 
-
-3. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig 1c_d_e tuning to visual motion.ipynb".
+4. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig 1c_d_e tuning to visual motion.ipynb".
 
 
 ## License
