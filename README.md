@@ -8,6 +8,14 @@ This repository contains code for analyzing calcium imaging data recorded from z
 - Python 3.7
 - Required packages are listed in the environment.yml file
 
+The code provided in this package was tested on Windows 10 operating system. 
+
+All software dependencies (including version numbers) can be found in the environment.yml file in this repository. The suite2p_env.yml file can be used to generate the environment used for suite2p pre-processing of the data. 
+
+Typical install time on a normal desktop computer: less than 1 hour, depending on the number of packages already installed.
+
+Expected run time on a normal desktop coputer: varies heavily between analysis types. Some notebooks will provide output in several minutes while other will provide output in several hours, depending on data type (e.g., whole brain datasets Vs single region datasets) or analysis type (e.g., pixel-wise analysis Vs ROI-wise analysis). 
+
 ## Installation
 
 1. Clone or download this repository
@@ -17,13 +25,9 @@ conda env create -f environment.yml
 3. Activate the environment:
 conda activate vis_nav
 
-The code provided in this package was tested on Windows 10 operating system. 
+4. Install the package by navigating to the cloned folder and running:
+pip install -e lavian_et_al_2025
 
-All software dependencies (including version numbers) can be found in the environment.yml file in this repository. The suite2p_env.yml file can be used to generate the environment used for suite2p pre-processing of the data. 
-
-Typical install time on a normal desktop computer: less than 1 hour, depending on the number of packages already installed.
-
-Expected run time on a normal desktop coputer: varies heavily between analysis types. Some notebooks will provide output in several minutes while other will provide output in several hours, depending on data type (e.g., whole brain datasets Vs single region datasets) or analysis type (e.g., pixel-wise analysis Vs ROI-wise analysis). 
 
 ## Repository Structure
 
@@ -51,6 +55,7 @@ jupyter lab
 
 4. Navigate to the desired analysis folder and open the relevant notebook. For example, to generate the plots presented in Figure 1C of the paper, go to the folder "visual motion" and run notebook "Fig 1c_d_e tuning to visual motion.ipynb".
 
+Note: all code used for analysis in this paper is provided. However, notebooks provided in the pre-processing and morphing folders will not run without raw data files which are not provided due to their large size. All other notebooks could be run using the provided processed data. 
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
