@@ -9,5 +9,10 @@ services:
       - "8888:8888"
     environment:
       JUPYTER_TOKEN: "264a37c4aba8d47d712277f228384f88"
+      XDG_CACHE_HOME: "/tmp/.cache"
+      HOME: "/work"
+      JUPYTER_RUNTIME_DIR: "/tmp/jupyter-runtime"
+    user: "1000:1000"
     volumes:
       - .:/work
+      - /mnt/b4b63ff6-d9bf-4a97-9404-ce61fe415540/Home-Appliances/zenodo/data:/work/data
