@@ -142,3 +142,17 @@ data/landmarks/2p/habenula/240611_f3/registration/warp_tx_0GenericAffine.mat
 *.tif
 *.gz
 *.zip
+.micromamba/envs/vis_nav/docs/csharp/icons/collall.gif
+*.gif
+*.gif
+.micromamba/envs/vis_nav/bin/autopoint
+/bin
+*.html
+.micromamba/envs/vis_nav/docs/java/com/sleepycat/db/RunRecoveryException.html
+.micromamba/envs/vis_nav/bin
+.micromamba/envs/vis_nav/bin/
+.micromamba/envs/vis_nav/doc/config
+
+.micromamba/envs/vis_nav/include/qt/QtQuick
+.micromamba/envs/vis_nav
+.micromamba
