@@ -1,0 +1,13 @@
+services:
+  lavian_et_al_2025:
+    container_name: lavian_et_al_2025
+    build:
+      context: .
+      args:
+        ENV_FILE: environment.docker.yml
+    ports:
+      - "8888:8888"
+    environment:
+      JUPYTER_TOKEN: "264a37c4aba8d47d712277f228384f88"
+    volumes:
+      - .:/work

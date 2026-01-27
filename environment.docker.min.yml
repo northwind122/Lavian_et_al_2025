@@ -1,0 +1,35 @@
+name: vis_nav
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - pip
+  - jupyterlab
+  - notebook
+  - jupyter_server
+  - ipykernel
+  - ipywidgets
+  - widgetsnbextension
+  - numpy
+  - pandas
+  - scipy
+  - matplotlib
+  - seaborn
+  - scikit-image
+  - scikit-learn
+  - statsmodels
+  - h5py
+  - tifffile
+  - imageio
+  - pillow
+  - numexpr
+  - numba
+  - cytoolz
+  - tqdm
+  - pyyaml
+  - requests
+  - pip:
+      - bouter==0.2.0
+      - split-dataset==0.4.2
+      - colorspacious==1.1.2
