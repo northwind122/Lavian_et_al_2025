@@ -15,4 +15,4 @@ services:
     user: "1000:1000"
     volumes:
       - .:/work
-      - /mnt/b4b63ff6-d9bf-4a97-9404-ce61fe415540/Home-Appliances/zenodo/data:/work/data
+      - ./data:/work/data

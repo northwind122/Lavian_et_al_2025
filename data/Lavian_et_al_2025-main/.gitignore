@@ -109,7 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-*.png
+
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -127,18 +127,3 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-data/confocal/ablation/f2 post 2d wb.ome.tiff
-*.tiff
-data/landmarks/2p/habenula/240404_f0/behavior/152620_img.png
-data/landmarks/2p/habenula/240404_f0/behavior/150029_behavior_log.hdf5
-*.hdf5
-*.h5
-*.npy
-*.npz
-*.json
-data/landmarks/2p/habenula/240611_f3/registration/warp_tx_0GenericAffine.mat
-*.mat
-*.db
-*.tif
-*.gz
-*.zip
